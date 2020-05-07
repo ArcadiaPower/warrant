@@ -112,6 +112,7 @@ class AWSSRP(object):
         self.k = hex_to_long(hex_hash('00' + n_hex + '0' + g_hex))
         self.small_a_value = self.generate_random_small_a()
         self.large_a_value = self.calculate_a()
+        self.challenge_parameters = {}
 
     def generate_random_small_a(self):
         """
@@ -173,6 +174,7 @@ class AWSSRP(object):
         return base64.standard_b64encode(hmac_obj.digest()).decode('utf-8')
 
     def process_challenge(self, challenge_parameters):
+        self.challenge_parameters = challenge_parameters
         user_id_for_srp = challenge_parameters['USER_ID_FOR_SRP']
         salt_hex = challenge_parameters['SALT']
         srp_b_hex = challenge_parameters['SRP_B']
@@ -206,11 +208,11 @@ class AWSSRP(object):
             ClientId=self.client_id
         )
         if response['ChallengeName'] == self.PASSWORD_VERIFIER_CHALLENGE:
-            self.challenge_response = self.process_challenge(response['ChallengeParameters'])
+            challenge_response = self.process_challenge(response['ChallengeParameters'])
             tokens = boto_client.respond_to_auth_challenge(
                 ClientId=self.client_id,
                 ChallengeName=self.PASSWORD_VERIFIER_CHALLENGE,
-                ChallengeResponses=self.challenge_response)
+                ChallengeResponses=challenge_response)
 
             if tokens.get('ChallengeName') == self.NEW_PASSWORD_REQUIRED_CHALLENGE:
                 raise ForceChangePasswordException('Change password before authenticating')
@@ -228,14 +230,14 @@ class AWSSRP(object):
             ClientId=self.client_id
         )
         if response['ChallengeName'] == self.PASSWORD_VERIFIER_CHALLENGE:
-            self.challenge_response = self.process_challenge(response['ChallengeParameters'])
+            challenge_response = self.process_challenge(response['ChallengeParameters'])
             tokens = boto_client.respond_to_auth_challenge(
                 ClientId=self.client_id,
                 ChallengeName=self.PASSWORD_VERIFIER_CHALLENGE,
-                ChallengeResponses=self.challenge_response)
+                ChallengeResponses=challenge_response)
 
             if tokens['ChallengeName'] == self.NEW_PASSWORD_REQUIRED_CHALLENGE:
-                self.challenge_response = {
+                challenge_response = {
                     'USERNAME': auth_params['USERNAME'],
                     'NEW_PASSWORD': new_password
                 }
@@ -243,7 +245,7 @@ class AWSSRP(object):
                     ClientId=self.client_id,
                     ChallengeName=self.NEW_PASSWORD_REQUIRED_CHALLENGE,
                     Session=tokens['Session'],
-                    ChallengeResponses=self.challenge_response)
+                    ChallengeResponses=challenge_response)
                 return new_password_response
             return tokens
         else:
