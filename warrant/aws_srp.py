@@ -112,6 +112,7 @@ class AWSSRP(object):
         self.k = hex_to_long(hex_hash('00' + n_hex + '0' + g_hex))
         self.small_a_value = self.generate_random_small_a()
         self.large_a_value = self.calculate_a()
+        self.challenge_parameters = {}
 
     def generate_random_small_a(self):
         """
@@ -173,6 +174,7 @@ class AWSSRP(object):
         return base64.standard_b64encode(hmac_obj.digest()).decode('utf-8')
 
     def process_challenge(self, challenge_parameters):
+        self.challenge_parameters = challenge_parameters
         user_id_for_srp = challenge_parameters['USER_ID_FOR_SRP']
         salt_hex = challenge_parameters['SALT']
         srp_b_hex = challenge_parameters['SRP_B']
