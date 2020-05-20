@@ -3,8 +3,21 @@ import os
 from setuptools import setup, find_packages
 from pip._internal.req import parse_requirements
 
-install_reqs = parse_requirements('requirements.txt', session=False)
-test_reqs = parse_requirements('requirements_test.txt', session=False)
+parsed_install_reqs = parse_requirements('requirements.txt', session=False)
+install_reqs = []
+for ir in parsed_install_reqs:
+    if hasattr(ir, 'req'):
+        install_reqs.append(str(ir.req))
+    else:
+        install_reqs.append(str(ir.requirement))
+
+parsed_test_reqs = parse_requirements('requirements_test.txt', session=False)
+test_reqs = []
+for ir in parsed_test_reqs:
+    if hasattr(ir, 'req'):
+        test_reqs.append(str(ir.req))
+    else:
+        test_reqs.append(str(ir.requirement))
 
 version = '0.1'
 
@@ -28,10 +41,8 @@ setup(
     packages=find_packages(),
     url='https://github.com/ArcadiaPower/warrant',
     license='Apache License 2.0',
-    install_requires=[str(ir.requirement) for ir in install_reqs],
-    extras_require={
-        'test': [str(ir.requirement) for ir in test_reqs]
-    },
+    install_requires=install_reqs,
+    extras_require={'test': test_reqs},
     include_package_data=True,
     zip_safe=True,
 
