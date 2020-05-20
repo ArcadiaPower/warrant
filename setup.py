@@ -26,7 +26,7 @@ setup(
     author_email='opensource@capless.io',
     maintainer='Brian Jinwright',
     packages=find_packages(),
-    url='https://github.com/capless/warrant',
+    url='https://github.com/ArcadiaPower/warrant',
     license='Apache License 2.0',
     install_requires=[str(ir.requirement) for ir in install_reqs],
     extras_require={
