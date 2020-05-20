@@ -24,7 +24,7 @@ version = '0.1'
 README="""Python class to integrate Boto3's Cognito client so it is easy to login users. With SRP support."""
 
 setup(
-    name='warrant',
+    name='notthatwarrant',
     version=version,
     description=README,
     long_description=README,
