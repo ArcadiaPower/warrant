@@ -19,12 +19,12 @@ for ir in parsed_test_reqs:
     else:
         test_reqs.append(str(ir.requirement))
 
-version = '0.6.1'
+version = '0.1'
 
 README="""Python class to integrate Boto3's Cognito client so it is easy to login users. With SRP support."""
 
 setup(
-    name='warrant',
+    name='apwarrant',
     version=version,
     description=README,
     long_description=README,
@@ -39,7 +39,7 @@ setup(
     author_email='opensource@capless.io',
     maintainer='Brian Jinwright',
     packages=find_packages(),
-    url='https://github.com/capless/warrant',
+    url='https://github.com/ArcadiaPower/warrant',
     license='Apache License 2.0',
     install_requires=install_reqs,
     extras_require={'test': test_reqs},
